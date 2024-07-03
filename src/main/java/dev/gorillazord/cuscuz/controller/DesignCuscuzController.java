@@ -36,12 +36,13 @@ public class DesignCuscuzController {
                 new Ingredient("RQJ", "Requeijão", Type.SAUCE),
                 new Ingredient("COCO", "Leite de Coco", Type.SAUCE),
                 new Ingredient("MTG", "Manteiga da Terra", Type.SAUCE),
-                new Ingredient("MLCA", "Molho de Carne", Type.SAUCE));
+                new Ingredient("CLCA", "Caldo de Carne", Type.SAUCE));
         Type[] types = Ingredient.Type.values();
         for (Type type : types) {
             model.addAttribute(type.toString().toLowerCase(), filterByType(ingredients, type));
         }
     }
+
     @ModelAttribute(name = "cuscuzOrder")
     public CuscuzOrder order() {
         return new CuscuzOrder();
@@ -63,5 +64,13 @@ public class DesignCuscuzController {
                 .stream()
                 .filter(x -> x.getType().equals(type))
                 .collect(Collectors.toList());
+    }
+
+    @PostMapping
+    public String processCuscuz(Cuscuz cuscuz,
+            @ModelAttribute CuscuzOrder cuscuzOrder) {
+        cuscuzOrder.addCuscuz(cuscuz);
+        log.info("Processing cuscuz: {}", cuscuz);
+        return "redirect:/orders/current";
     }
 }
