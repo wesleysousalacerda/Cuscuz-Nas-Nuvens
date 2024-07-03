@@ -11,7 +11,7 @@ public class CuscuzOrder {
     private String deliveryStreet;
     private String deliveryCity;
     private String deliveryState;
-    private String deliveryZip;
+    private String deliveryCep;
     private String ccNumber;
     private String ccExpiration;
     private String ccCVV;
