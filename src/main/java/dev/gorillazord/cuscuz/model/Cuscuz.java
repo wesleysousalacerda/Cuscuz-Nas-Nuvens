@@ -1,7 +1,13 @@
 package dev.gorillazord.cuscuz.model;
 
+import java.util.List;
+
+import lombok.Data;
+
+@Data
 public class Cuscuz {
-    public Cuscuz() {
-        // TODO Auto-generated method stub
-    }
+    private String name;
+
+    private List<Ingredient> ingredients;
+
 }
