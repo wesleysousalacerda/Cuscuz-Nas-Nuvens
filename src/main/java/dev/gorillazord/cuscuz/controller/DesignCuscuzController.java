@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import lombok.extern.slf4j.Slf4j;
 import dev.gorillazord.cuscuz.model.Ingredient;
 import dev.gorillazord.cuscuz.model.Ingredient.Type;
+import jakarta.validation.Valid;
 import dev.gorillazord.cuscuz.model.Cuscuz;
 import dev.gorillazord.cuscuz.model.CuscuzOrder;
 
@@ -67,8 +69,11 @@ public class DesignCuscuzController {
     }
 
     @PostMapping
-    public String processCuscuz(Cuscuz cuscuz,
+    public String processCuscuz(@Valid Cuscuz cuscuz, Errors errors,
             @ModelAttribute CuscuzOrder cuscuzOrder) {
+        if (errors.hasErrors()){
+            return "design";
+        }
         cuscuzOrder.addCuscuz(cuscuz);
         log.info("Processing cuscuz: {}", cuscuz);
         return "redirect:/orders/current";

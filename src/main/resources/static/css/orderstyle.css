@@ -74,6 +74,9 @@ li {
     list-style-type: none;
     margin-bottom: 5px;
 }
+.validationError {
+    color: red;
+  }
 button {
     background-color: #4CAF50;
     color: white;
