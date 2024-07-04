@@ -3,6 +3,8 @@ package dev.gorillazord.cuscuz.controller;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import lombok.extern.slf4j.Slf4j;
 import dev.gorillazord.cuscuz.model.Ingredient;
 import dev.gorillazord.cuscuz.model.Ingredient.Type;
+import dev.gorillazord.cuscuz.repository.IngredientRepository;
 import jakarta.validation.Valid;
 import dev.gorillazord.cuscuz.model.Cuscuz;
 import dev.gorillazord.cuscuz.model.CuscuzOrder;
@@ -25,23 +28,21 @@ import dev.gorillazord.cuscuz.model.CuscuzOrder;
 @SessionAttributes("cuscuzOrder")
 public class DesignCuscuzController {
 
+    private final IngredientRepository ingredientRepo;
+
+ @Autowired
+ public DesignCuscuzController(
+ IngredientRepository ingredientRepo) {
+ this.ingredientRepo = ingredientRepo;
+ }
+
     @ModelAttribute
     public void addIngredientsToModel(Model model) {
-        List<Ingredient> ingredients = Arrays.asList(
-                new Ingredient("SOL", "Carne de Sol", Type.PROTEIN),
-                new Ingredient("MOIDA", "Carne Moída", Type.PROTEIN),
-                new Ingredient("FGO", "Frango Desfiado", Type.PROTEIN),
-                new Ingredient("OVO", "Ovo Mexido", Type.PROTEIN),
-                new Ingredient("QJO", "Queijo Coalho", Type.PROTEIN),
-                new Ingredient("TMTE", "Tomate", Type.SIDE),
-                new Ingredient("ALFC", "Alface", Type.SIDE),
-                new Ingredient("RQJ", "Requeijão", Type.SAUCE),
-                new Ingredient("COCO", "Leite de Coco", Type.SAUCE),
-                new Ingredient("MTG", "Manteiga da Terra", Type.SAUCE),
-                new Ingredient("CLCA", "Caldo de Carne", Type.SAUCE));
+        Iterable<Ingredient> ingredients = ingredientRepo.findAll();
         Type[] types = Ingredient.Type.values();
         for (Type type : types) {
-            model.addAttribute(type.toString().toLowerCase(), filterByType(ingredients, type));
+            model.addAttribute(type.toString().toLowerCase(),
+                    filterByType((List<Ingredient>) ingredients, type));
         }
     }
 
@@ -59,7 +60,7 @@ public class DesignCuscuzController {
     public String showDesignForm() {
         return "design";
     }
- 
+
     private Iterable<Ingredient> filterByType(
             List<Ingredient> ingredients, Type type) {
         return ingredients
@@ -71,7 +72,7 @@ public class DesignCuscuzController {
     @PostMapping
     public String processCuscuz(@Valid Cuscuz cuscuz, Errors errors,
             @ModelAttribute CuscuzOrder cuscuzOrder) {
-        if (errors.hasErrors()){
+        if (errors.hasErrors()) {
             return "design";
         }
         cuscuzOrder.addCuscuz(cuscuz);
