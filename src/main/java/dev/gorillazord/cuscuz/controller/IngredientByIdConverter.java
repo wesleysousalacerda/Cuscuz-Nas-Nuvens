@@ -1,4 +1,4 @@
-package dev.gorillazord.cuscuz.web;
+package dev.gorillazord.cuscuz.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
@@ -9,6 +9,7 @@ import dev.gorillazord.cuscuz.repository.IngredientRepository;
 
 @Component
 public class IngredientByIdConverter implements Converter<String, Ingredient> {
+
         private IngredientRepository ingredientRepo;
 
         @Autowired
@@ -20,4 +21,5 @@ public class IngredientByIdConverter implements Converter<String, Ingredient> {
         public Ingredient convert(String id) {
                 return ingredientRepo.findById(id).orElse(null);
         }
+
 }

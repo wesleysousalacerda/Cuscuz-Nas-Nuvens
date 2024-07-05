@@ -1,5 +1,6 @@
 package dev.gorillazord.cuscuz.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,7 +13,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
-public class CuscuzOrder {
+public class CuscuzOrder implements Serializable{
 
     private static final long serialVersionUID = 1L;
     private Long id;
