@@ -1,13 +1,10 @@
 package dev.gorillazord.cuscuz.repository;
 
-import java.util.Optional;
+import org.springframework.data.repository.CrudRepository;
 
 import dev.gorillazord.cuscuz.model.Ingredient;
 
-public interface IngredientRepository {
-    Iterable<Ingredient> findAll();
+public interface IngredientRepository 
+         extends CrudRepository<Ingredient, String> {
 
-    Optional<Ingredient> findById(String id);
-
-    Ingredient save(Ingredient ingredient);
 }

@@ -1,20 +1,33 @@
 package dev.gorillazord.cuscuz.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.domain.Persistable;
+import org.springframework.data.relational.core.mapping.Table;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Table
 @AllArgsConstructor
 @NoArgsConstructor(access=AccessLevel.PRIVATE, force=true)
-public class Ingredient {
-    private final String id;
-    private final String name;
-    private final Type type;
+public class Ingredient implements Persistable<String> {
 
-    public enum Type {
-        PROTEIN, SIDE, SAUCE
-    }
+  @Id
+  private String id;
+
+  private String name;
+  private Type type;
+
+  @Override
+	public boolean isNew() {
+		return true;
+	}
+
+  public enum Type {
+    PROTEIN, SIDE, SAUCE
+  }
 
 }

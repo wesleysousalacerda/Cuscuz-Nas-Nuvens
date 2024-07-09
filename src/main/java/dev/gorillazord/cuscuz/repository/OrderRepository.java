@@ -1,11 +1,10 @@
 package dev.gorillazord.cuscuz.repository;
 
-import java.util.Optional;
+import org.springframework.data.repository.CrudRepository;
 
 import dev.gorillazord.cuscuz.model.CuscuzOrder;
 
-public interface OrderRepository {
-    CuscuzOrder save(CuscuzOrder order);
-    Optional<CuscuzOrder> findById(Long id);
+public interface OrderRepository 
+         extends CrudRepository<CuscuzOrder, Long> {
 
 }

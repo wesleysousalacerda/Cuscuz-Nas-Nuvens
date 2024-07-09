@@ -1,7 +1,8 @@
 package dev.gorillazord.cuscuz.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,58 +26,61 @@ import jakarta.validation.Valid;
 @SessionAttributes("cuscuzOrder")
 public class DesignCuscuzController {
 
-    private final IngredientRepository ingredientRepo;
+  private final IngredientRepository ingredientRepo;
 
-    @Autowired
-    public DesignCuscuzController(
-            IngredientRepository ingredientRepo) {
-        this.ingredientRepo = ingredientRepo;
+  @Autowired
+  public DesignCuscuzController(
+        IngredientRepository ingredientRepo) {
+    this.ingredientRepo = ingredientRepo;
+  }
+
+  @ModelAttribute
+  public void addIngredientsToModel(Model model) {
+    List<Ingredient> ingredients = new ArrayList<>();
+    ingredientRepo.findAll().forEach(i -> ingredients.add(i));
+
+    Type[] types = Ingredient.Type.values();
+    for (Type type : types) {
+      model.addAttribute(type.toString().toLowerCase(),
+          filterByType(ingredients, type));
+    }
+  }
+
+  @ModelAttribute(name = "cuscuzOrder")
+  public CuscuzOrder order() {
+    return new CuscuzOrder();
+  }
+
+  @ModelAttribute(name = "cuscuz")
+  public Cuscuz cuscuz() {
+    return new Cuscuz();
+  }
+
+  @GetMapping
+  public String showDesignForm() {
+    return "design";
+  }
+
+  @PostMapping
+  public String processCuscuz(
+      @Valid Cuscuz cuscuz, Errors errors,
+      @ModelAttribute CuscuzOrder cuscuzOrder) {
+
+    if (errors.hasErrors()) {
+      return "design";
     }
 
-    @ModelAttribute
-    public void addIngredientsToModel(Model model) {
-        Iterable<Ingredient> ingredients = ingredientRepo.findAll();
-        Type[] types = Ingredient.Type.values();
-        for (Type type : types) {
-            model.addAttribute(type.toString().toLowerCase(),
-                    filterByType(ingredients, type));
-        }
-    }
+    cuscuzOrder.addCuscuz(cuscuz);
 
-    @ModelAttribute(name = "cuscuzOrder")
-    public CuscuzOrder order() {
-        return new CuscuzOrder();
-    }
+    return "redirect:/orders/current";
+  }
 
-    @ModelAttribute(name = "cuscuz")
-    public Cuscuz cuscuz() {
-        return new Cuscuz();
-    }
-
-    @GetMapping
-    public String showDesignForm() {
-        return "design";
-    }
-
-    @PostMapping
-    public String processCuscuz(
-            @Valid Cuscuz cuscuz, Errors errors,
-            @ModelAttribute CuscuzOrder cuscuzOrder) {
-
-        if (errors.hasErrors()) {
-            return "design";
-        }
-
-        cuscuzOrder.addCuscuz(cuscuz);
-
-        return "redirect:/orders/current";
-    }
-
-    private Iterable<Ingredient> filterByType(
-            Iterable<Ingredient> ingredients, Type type) {
-        return StreamSupport.stream(ingredients.spliterator(), false)
-                .filter(i -> i.getType().equals(type))
-                .collect(Collectors.toList());
-    }
+  private Iterable<Ingredient> filterByType(
+      List<Ingredient> ingredients, Type type) {
+    return ingredients
+              .stream()
+              .filter(x -> x.getType().equals(type))
+              .collect(Collectors.toList());
+  }
 
 }
