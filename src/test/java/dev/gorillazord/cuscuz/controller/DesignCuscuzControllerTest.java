@@ -65,15 +65,15 @@ public class DesignCuscuzControllerTest {
 
         when(ingredientRepository.findById("SOL"))
                 .thenReturn(Optional.of(new Ingredient("SOL", "Carne de Sol", Type.PROTEIN)));
-        when(ingredientRepository.findById("FGO"))
-                .thenReturn(Optional.of(new Ingredient("FGO", "Frango Desfiado", Type.PROTEIN)));
+        when(ingredientRepository.findById("TMTE"))
+                .thenReturn(Optional.of(new Ingredient("TMTE", "Tomate", Type.SIDE)));
         when(ingredientRepository.findById("RQJ"))
                 .thenReturn(Optional.of(new Ingredient("RQJ", "Requeijão", Type.SAUCE)));
         design = new Cuscuz();
         design.setName("Test Cuscuz");
 
         design.setIngredients(
-                Arrays.asList(new IngredientRef("FLTO"), new IngredientRef("GRBF"), new IngredientRef("CHED")));
+                Arrays.asList(new IngredientRef("SOL"), new IngredientRef("TMTE"), new IngredientRef("RQJ")));
         
 
     }
@@ -83,15 +83,15 @@ public class DesignCuscuzControllerTest {
         mockMvc.perform(get("/design"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("design"))
-                .andExpect(model().attribute("protein", ingredients.subList(0, 4)))
-                .andExpect(model().attribute("side", ingredients.subList(5, 6)))
-                .andExpect(model().attribute("sauce", ingredients.subList(7, 9)));
+                .andExpect(model().attribute("protein", ingredients.subList(0, 5)))
+                .andExpect(model().attribute("side", ingredients.subList(5, 7)))
+                .andExpect(model().attribute("sauce", ingredients.subList(7, 10)));
     }
 
     @Test
     public void processCuscuz() throws Exception {
         mockMvc.perform(post("/design")
-                .content("name=Test+Cuscuz&ingredients=SOL,FGO,RQJ")
+                .content("name=Test+Cuscuz&ingredients=SOL,TMTE,RQJ")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(header().stringValues("Location", "/orders/current"));
